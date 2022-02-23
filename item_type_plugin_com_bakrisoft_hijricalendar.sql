@@ -28,7 +28,7 @@ prompt APPLICATION 104 - CollectionsDemo
 -- Application Export:
 --   Application:     104
 --   Name:            CollectionsDemo
---   Date and Time:   15:59 Wednesday February 23, 2022
+--   Date and Time:   16:33 Wednesday February 23, 2022
 --   Exported By:     ABUBAKR
 --   Flashback:       0
 --   Export Type:     Component Export
@@ -63,7 +63,7 @@ wwv_flow_api.create_plugin(
 '    l_html_string varchar2(200);',
 '    HIJRI_CALENDAR_BASE CONSTANT VARCHAR2(255) := p_plugin.file_prefix || ''js/'';',
 'begin',
-'    l_html_string := p_item.attribute_02||''&nbsp<input type="text" id="''||p_item.name||''"/>'';',
+'    l_html_string := ''<input type="text" id="''||p_item.name||''" class="apex-item-text"/>'';',
 '    htp.p(l_html_string);',
 '    APEX_CSS.ADD_FILE (',
 '        P_NAME => ''jquery.calendars.picker'',',
@@ -113,6 +113,7 @@ wwv_flow_api.create_plugin(
 'end;'))
 ,p_api_version=>2
 ,p_render_function=>'render'
+,p_standard_attributes=>'VISIBLE'
 ,p_substitute_attributes=>true
 ,p_subscribe_plugin_settings=>true
 ,p_help_text=>'Picker for Hijri'
@@ -126,22 +127,10 @@ wwv_flow_api.create_plugin_attribute(
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>1
 ,p_display_sequence=>10
-,p_prompt=>'Format mask'
+,p_prompt=>'Date format'
 ,p_attribute_type=>'TEXT'
 ,p_is_required=>false
 ,p_default_value=>'dd-mm-yyyy'
-,p_is_translatable=>false
-);
-wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(143345380978856060)
-,p_plugin_id=>wwv_flow_api.id(143332807992738829)
-,p_attribute_scope=>'COMPONENT'
-,p_attribute_sequence=>2
-,p_display_sequence=>20
-,p_prompt=>'Label'
-,p_attribute_type=>'TEXT'
-,p_is_required=>false
-,p_default_value=>'Hijri date'
 ,p_is_translatable=>false
 );
 end;
