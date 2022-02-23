@@ -28,7 +28,7 @@ prompt APPLICATION 104 - CollectionsDemo
 -- Application Export:
 --   Application:     104
 --   Name:            CollectionsDemo
---   Date and Time:   16:33 Wednesday February 23, 2022
+--   Date and Time:   22:12 Wednesday February 23, 2022
 --   Exported By:     ABUBAKR
 --   Flashback:       0
 --   Export Type:     Component Export
@@ -60,56 +60,56 @@ wwv_flow_api.create_plugin(
 '    p_param  in            apex_plugin.t_item_render_param,',
 '    p_result in out nocopy apex_plugin.t_item_render_result )',
 'as',
-'    l_html_string varchar2(200);',
-'    HIJRI_CALENDAR_BASE CONSTANT VARCHAR2(255) := p_plugin.file_prefix || ''js/'';',
+'    v_item_html varchar2(200);',
+'    v_js_on_load VARCHAR2(4000);',
 'begin',
-'    l_html_string := ''<input type="text" id="''||p_item.name||''" class="apex-item-text"/>'';',
-'    htp.p(l_html_string);',
+'    v_item_html := ''<input type="text" id="''||p_item.name||''" class="apex-item-text"/>'';',
+'    htp.p(v_item_html);',
 '    APEX_CSS.ADD_FILE (',
 '        P_NAME => ''jquery.calendars.picker'',',
 '        P_DIRECTORY => p_plugin.file_prefix || ''css/''',
 '    );',
 '    APEX_JAVASCRIPT.ADD_LIBRARY(',
 '        P_NAME => ''jquery.min'',',
-'        P_DIRECTORY => HIJRI_CALENDAR_BASE ',
+'        P_DIRECTORY => p_plugin.file_prefix||''js/'' ',
 '    );',
 '    APEX_JAVASCRIPT.ADD_LIBRARY(',
 '        P_NAME => ''jquery.plugin'',',
-'        P_DIRECTORY => HIJRI_CALENDAR_BASE ',
+'        P_DIRECTORY => p_plugin.file_prefix||''js/'' ',
 '    );',
 '    APEX_JAVASCRIPT.ADD_LIBRARY(',
 '        P_NAME => ''jquery.calendars'',',
-'        P_DIRECTORY => HIJRI_CALENDAR_BASE ',
+'        P_DIRECTORY => p_plugin.file_prefix||''js/'' ',
 '    );',
 '    APEX_JAVASCRIPT.ADD_LIBRARY(',
 '        P_NAME => ''jquery.calendars.plus'',',
-'        P_DIRECTORY => HIJRI_CALENDAR_BASE ',
+'        P_DIRECTORY => p_plugin.file_prefix||''js/'' ',
 '    );',
 '    APEX_JAVASCRIPT.ADD_LIBRARY(',
 '        P_NAME => ''jquery.calendars.picker'',',
-'        P_DIRECTORY => HIJRI_CALENDAR_BASE ',
+'        P_DIRECTORY => p_plugin.file_prefix||''js/'' ',
 '    );',
 '    APEX_JAVASCRIPT.ADD_LIBRARY(',
 '        P_NAME => ''jquery.calendars.ummalqura'',',
-'        P_DIRECTORY => HIJRI_CALENDAR_BASE ',
+'        P_DIRECTORY => p_plugin.file_prefix||''js/'' ',
 '    );',
-'    APEX_JAVASCRIPT.ADD_LIBRARY(',
-'        P_NAME => ''jquery.calendars.ummalqura-ar'',',
-'        P_DIRECTORY => HIJRI_CALENDAR_BASE ',
-'    );',
-'    apex_javascript.add_onload_code(p_code => ''$("#''||p_item.name||''").calendarsPicker({calendar: $.calendars.instance(''''ummalqura'''',''''ar''''),dateFormat: ''''''||p_item.attribute_01||'''''',onClose: function(dates){apex.event.trigger("#''||p_item.name||''", '''
-||'''change'''');}});'');',
-'    p_result.is_navigable := false;',
-'end;',
+'    if p_item.attribute_02 = ''ar'' then',
+'        APEX_JAVASCRIPT.ADD_LIBRARY(',
+'            P_NAME => ''jquery.calendars.picker-ar'',',
+'            P_DIRECTORY => p_plugin.file_prefix||''js/'' ',
+'        );',
+'        APEX_JAVASCRIPT.ADD_LIBRARY(',
+'            P_NAME => ''jquery.calendars.ummalqura-ar'',',
+'            P_DIRECTORY => p_plugin.file_prefix||''js/'' ',
+'        );',
+'    end if;',
+'    ',
+'    v_js_on_load := ''$("#''||p_item.name||''").calendarsPicker({''',
+'                    ||''calendar: $.calendars.instance(''''ummalqura''''''||case p_item.attribute_02 when ''ar'' then '',''''ar'''''' end||''),''',
+'                    ||''dateFormat: ''''''||p_item.attribute_01||'''''',''',
+'                    ||''onClose: function(dates){apex.event.trigger("#''||p_item.name||''", ''''change'''');}});'';',
 '',
-'procedure ajax (',
-'    p_item   in            apex_plugin.t_item,',
-'    p_plugin in            apex_plugin.t_plugin,',
-'    p_param  in            apex_plugin.t_item_ajax_param,',
-'    p_result in out nocopy apex_plugin.t_item_ajax_result )',
-'as',
-'begin',
-'    null;',
+'    apex_javascript.add_onload_code(p_code => v_js_on_load);',
 'end;'))
 ,p_api_version=>2
 ,p_render_function=>'render'
@@ -119,7 +119,7 @@ wwv_flow_api.create_plugin(
 ,p_help_text=>'Picker for Hijri'
 ,p_version_identifier=>'1'
 ,p_about_url=>'https://github.com/bakrisoft/ApexHijriPicker'
-,p_files_version=>9
+,p_files_version=>10
 );
 wwv_flow_api.create_plugin_attribute(
  p_id=>wwv_flow_api.id(143337129661771537)
@@ -132,6 +132,54 @@ wwv_flow_api.create_plugin_attribute(
 ,p_is_required=>false
 ,p_default_value=>'dd-mm-yyyy'
 ,p_is_translatable=>false
+,p_examples=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'d-m-yy<br>',
+'dd-mm-yyyy<br>',
+'dd-MM-yyyy<br>',
+'D-M-YYYY<br>'))
+,p_help_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'d - day of the month (no leading zero)<br>',
+'dd - day of the month (two digit)<br>',
+'D - day name short',
+'DD - day name long',
+'o - day of the year (no leading zeros)<br>',
+'oo - day of the year (three digits)<br>',
+'w - week of year (no leading zero)<br>',
+'ww - week of year (two digit)<br>',
+'m - month of the year (no leading zero)<br>',
+'mm - month of the year (two digit)<br>',
+'M - month name short',
+'MM - month name long',
+'yy - year (two digit)<br>',
+'yyyy - year (four digit)<br>',
+'YYYY - formatted year'))
+);
+wwv_flow_api.create_plugin_attribute(
+ p_id=>wwv_flow_api.id(143363984115649409)
+,p_plugin_id=>wwv_flow_api.id(143332807992738829)
+,p_attribute_scope=>'COMPONENT'
+,p_attribute_sequence=>2
+,p_display_sequence=>20
+,p_prompt=>'Localization'
+,p_attribute_type=>'SELECT LIST'
+,p_is_required=>true
+,p_default_value=>'en'
+,p_is_translatable=>false
+,p_lov_type=>'STATIC'
+);
+wwv_flow_api.create_plugin_attr_value(
+ p_id=>wwv_flow_api.id(143364777511651498)
+,p_plugin_attribute_id=>wwv_flow_api.id(143363984115649409)
+,p_display_sequence=>10
+,p_display_value=>'Arabic'
+,p_return_value=>'ar'
+);
+wwv_flow_api.create_plugin_attr_value(
+ p_id=>wwv_flow_api.id(143365128006652762)
+,p_plugin_attribute_id=>wwv_flow_api.id(143363984115649409)
+,p_display_sequence=>20
+,p_display_value=>'English'
+,p_return_value=>'en'
 );
 end;
 /
@@ -3117,6 +3165,35 @@ wwv_flow_api.create_plugin_file(
 ,p_plugin_id=>wwv_flow_api.id(143332807992738829)
 ,p_file_name=>'css/jquery.calendars.picker.css'
 ,p_mime_type=>'text/css'
+,p_file_charset=>'utf-8'
+,p_file_content=>wwv_flow_api.varchar2_to_blob(wwv_flow_api.g_varchar2_table)
+);
+end;
+/
+begin
+wwv_flow_api.g_varchar2_table := wwv_flow_api.empty_varchar2_table;
+wwv_flow_api.g_varchar2_table(1) := '2F2A20687474703A2F2F6B656974682D776F6F642E6E616D652F63616C656E646172732E68746D6C0D0A202020417261626963206C6F63616C69736174696F6E20666F722063616C656E6461727320646174657069636B657220666F72206A5175657279';
+wwv_flow_api.g_varchar2_table(2) := '2E0D0A2020204B68616C656420416C20486F72616E69202D2D20D8AED8A7D984D8AF20D8A7D984D8ADD988D8B1D8A7D986D98A202D2D206B6F6B6F2E647740676D61696C2E636F6D202A2F0D0A2866756E6374696F6E282429207B0D0A09277573652073';
+wwv_flow_api.g_varchar2_table(3) := '7472696374273B0D0A09242E63616C656E646172735069636B65722E726567696F6E616C4F7074696F6E732E6172203D207B0D0A090972656E64657265723A20242E63616C656E646172735069636B65722E64656661756C7452656E64657265722C0D0A';
+wwv_flow_api.g_varchar2_table(4) := '090970726576546578743A202726237833633BD8A7D984D8B3D8A7D8A8D982272C0D0A0909707265765374617475733A2027D8B9D8B1D8B620D8A7D984D8B4D987D8B120D8A7D984D8B3D8A7D8A8D982272C0D0A0909707265764A756D70546578743A20';
+wwv_flow_api.g_varchar2_table(5) := '2726237833633B26237833633B272C0D0A0909707265764A756D705374617475733A2027272C0D0A09096E657874546578743A2027D8A7D984D8AAD8A7D984D98A26237833653B272C0D0A09096E6578745374617475733A2027D8B9D8B1D8B620D8A7D9';
+wwv_flow_api.g_varchar2_table(6) := '84D8B4D987D8B120D8A7D984D982D8A7D8AFD985272C0D0A09096E6578744A756D70546578743A202726237833653B26237833653B272C0D0A09096E6578744A756D705374617475733A2027272C0D0A090963757272656E74546578743A2027D8A7D984';
+wwv_flow_api.g_varchar2_table(7) := 'D98AD988D985272C0D0A090963757272656E745374617475733A2027D8B9D8B1D8B620D8A7D984D8B4D987D8B120D8A7D984D8ADD8A7D984D98A272C0D0A0909746F646179546578743A2027D8A7D984D98AD988D985272C0D0A0909746F646179537461';
+wwv_flow_api.g_varchar2_table(8) := '7475733A2027D8B9D8B1D8B620D8A7D984D8B4D987D8B120D8A7D984D8ADD8A7D984D98A272C0D0A0909636C656172546578743A2027D985D8B3D8AD272C0D0A0909636C6561725374617475733A2027D8A7D985D8B3D8AD20D8A7D984D8AAD8A7D8B1D9';
+wwv_flow_api.g_varchar2_table(9) := '8AD8AE20D8A7D984D8ADD8A7D984D98A272C0D0A0909636C6F7365546578743A2027D8A5D8BAD984D8A7D982272C0D0A0909636C6F73655374617475733A2027D8A5D8BAD984D8A7D98220D8A8D8AFD988D98620D8ADD981D8B8272C0D0A090979656172';
+wwv_flow_api.g_varchar2_table(10) := '5374617475733A2027D8B9D8B1D8B620D8B3D986D8A920D8A2D8AED8B1D989272C0D0A09096D6F6E74685374617475733A2027D8B9D8B1D8B620D8B4D987D8B120D8A2D8AED8B1272C0D0A09097765656B546578743A2027D8A3D8B3D8A8D988D8B9272C';
+wwv_flow_api.g_varchar2_table(11) := '0D0A09097765656B5374617475733A2027D8A3D8B3D8A8D988D8B920D8A7D984D8B3D986D8A9272C0D0A09096461795374617475733A2027D8A7D8AED8AAD8B120442C204D2064272C0D0A090964656661756C745374617475733A2027D8A7D8AED8AAD8';
+wwv_flow_api.g_varchar2_table(12) := 'B120D98AD988D985272C0D0A0909697352544C3A20747275650D0A097D3B0D0A09242E63616C656E646172735069636B65722E73657444656661756C747328242E63616C656E646172735069636B65722E726567696F6E616C4F7074696F6E732E617229';
+wwv_flow_api.g_varchar2_table(13) := '3B0D0A7D29286A5175657279293B0D0A';
+null;
+end;
+/
+begin
+wwv_flow_api.create_plugin_file(
+ p_id=>wwv_flow_api.id(143366562152663823)
+,p_plugin_id=>wwv_flow_api.id(143332807992738829)
+,p_file_name=>'js/jquery.calendars.picker-ar.js'
+,p_mime_type=>'application/javascript'
 ,p_file_charset=>'utf-8'
 ,p_file_content=>wwv_flow_api.varchar2_to_blob(wwv_flow_api.g_varchar2_table)
 );
