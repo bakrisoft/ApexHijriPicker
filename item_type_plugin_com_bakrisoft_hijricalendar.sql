@@ -28,7 +28,7 @@ prompt APPLICATION 104 - CollectionsDemo
 -- Application Export:
 --   Application:     104
 --   Name:            CollectionsDemo
---   Date and Time:   22:12 Wednesday February 23, 2022
+--   Date and Time:   13:31 Thursday February 24, 2022
 --   Exported By:     ABUBAKR
 --   Flashback:       0
 --   Export Type:     Component Export
@@ -60,54 +60,60 @@ wwv_flow_api.create_plugin(
 '    p_param  in            apex_plugin.t_item_render_param,',
 '    p_result in out nocopy apex_plugin.t_item_render_result )',
 'as',
+'    v_calendar_locale varchar2(10) := '''';',
 '    v_item_html varchar2(200);',
 '    v_js_on_load VARCHAR2(4000);',
 'begin',
 '    v_item_html := ''<input type="text" id="''||p_item.name||''" class="apex-item-text"/>'';',
 '    htp.p(v_item_html);',
+'    ',
 '    APEX_CSS.ADD_FILE (',
 '        P_NAME => ''jquery.calendars.picker'',',
-'        P_DIRECTORY => p_plugin.file_prefix || ''css/''',
+'        P_DIRECTORY => p_plugin.file_prefix||''css/''',
 '    );',
 '    APEX_JAVASCRIPT.ADD_LIBRARY(',
 '        P_NAME => ''jquery.min'',',
-'        P_DIRECTORY => p_plugin.file_prefix||''js/'' ',
+'        P_DIRECTORY => p_plugin.file_prefix||''js/''',
 '    );',
 '    APEX_JAVASCRIPT.ADD_LIBRARY(',
 '        P_NAME => ''jquery.plugin'',',
-'        P_DIRECTORY => p_plugin.file_prefix||''js/'' ',
+'        P_DIRECTORY => p_plugin.file_prefix||''js/''',
 '    );',
 '    APEX_JAVASCRIPT.ADD_LIBRARY(',
 '        P_NAME => ''jquery.calendars'',',
-'        P_DIRECTORY => p_plugin.file_prefix||''js/'' ',
+'        P_DIRECTORY => p_plugin.file_prefix||''js/''',
 '    );',
 '    APEX_JAVASCRIPT.ADD_LIBRARY(',
 '        P_NAME => ''jquery.calendars.plus'',',
-'        P_DIRECTORY => p_plugin.file_prefix||''js/'' ',
+'        P_DIRECTORY => p_plugin.file_prefix||''js/''',
 '    );',
 '    APEX_JAVASCRIPT.ADD_LIBRARY(',
 '        P_NAME => ''jquery.calendars.picker'',',
-'        P_DIRECTORY => p_plugin.file_prefix||''js/'' ',
+'        P_DIRECTORY => p_plugin.file_prefix||''js/''',
 '    );',
 '    APEX_JAVASCRIPT.ADD_LIBRARY(',
 '        P_NAME => ''jquery.calendars.ummalqura'',',
-'        P_DIRECTORY => p_plugin.file_prefix||''js/'' ',
+'        P_DIRECTORY => p_plugin.file_prefix||''js/''',
 '    );',
-'    if p_item.attribute_02 = ''ar'' then',
+'    ',
+'    if p_item.attribute_02 = ''ar'' or (p_item.attribute_02 = ''sb'' and apex_util.get_session_lang = ''ar-sa'') then',
 '        APEX_JAVASCRIPT.ADD_LIBRARY(',
 '            P_NAME => ''jquery.calendars.picker-ar'',',
-'            P_DIRECTORY => p_plugin.file_prefix||''js/'' ',
+'            P_DIRECTORY => p_plugin.file_prefix||''js/''',
 '        );',
 '        APEX_JAVASCRIPT.ADD_LIBRARY(',
 '            P_NAME => ''jquery.calendars.ummalqura-ar'',',
-'            P_DIRECTORY => p_plugin.file_prefix||''js/'' ',
+'            P_DIRECTORY => p_plugin.file_prefix||''js/''',
 '        );',
 '    end if;',
 '    ',
-'    v_js_on_load := ''$("#''||p_item.name||''").calendarsPicker({''',
-'                    ||''calendar: $.calendars.instance(''''ummalqura''''''||case p_item.attribute_02 when ''ar'' then '',''''ar'''''' end||''),''',
-'                    ||''dateFormat: ''''''||p_item.attribute_01||'''''',''',
-'                    ||''onClose: function(dates){apex.event.trigger("#''||p_item.name||''", ''''change'''');}});'';',
+'    v_js_on_load := ''$("#''||p_item.name||''").calendarsPicker({',
+'                        calendar: $.calendars.instance(''''ummalqura''''''||v_calendar_locale||''),',
+'                        dateFormat: ''''''||p_item.attribute_01||'''''',',
+'                        onClose: function(dates){',
+'                            apex.event.trigger("#''||p_item.name||''", ''''change'''');',
+'                        }',
+'                    });'';',
 '',
 '    apex_javascript.add_onload_code(p_code => v_js_on_load);',
 'end;'))
@@ -117,7 +123,7 @@ wwv_flow_api.create_plugin(
 ,p_substitute_attributes=>true
 ,p_subscribe_plugin_settings=>true
 ,p_help_text=>'Picker for Hijri'
-,p_version_identifier=>'1'
+,p_version_identifier=>'1.0'
 ,p_about_url=>'https://github.com/bakrisoft/ApexHijriPicker'
 ,p_files_version=>10
 );
@@ -163,7 +169,7 @@ wwv_flow_api.create_plugin_attribute(
 ,p_prompt=>'Localization'
 ,p_attribute_type=>'SELECT LIST'
 ,p_is_required=>true
-,p_default_value=>'en'
+,p_default_value=>'sb'
 ,p_is_translatable=>false
 ,p_lov_type=>'STATIC'
 );
@@ -180,6 +186,13 @@ wwv_flow_api.create_plugin_attr_value(
 ,p_display_sequence=>20
 ,p_display_value=>'English'
 ,p_return_value=>'en'
+);
+wwv_flow_api.create_plugin_attr_value(
+ p_id=>wwv_flow_api.id(143890951547056000)
+,p_plugin_attribute_id=>wwv_flow_api.id(143363984115649409)
+,p_display_sequence=>30
+,p_display_value=>'Session based'
+,p_return_value=>'sb'
 );
 end;
 /
