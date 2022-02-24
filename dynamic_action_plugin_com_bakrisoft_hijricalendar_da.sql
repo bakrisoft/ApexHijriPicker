@@ -28,7 +28,7 @@ prompt APPLICATION 104 - CollectionsDemo
 -- Application Export:
 --   Application:     104
 --   Name:            CollectionsDemo
---   Date and Time:   13:31 Thursday February 24, 2022
+--   Date and Time:   16:39 Thursday February 24, 2022
 --   Exported By:     ABUBAKR
 --   Flashback:       0
 --   Export Type:     Component Export
@@ -59,10 +59,14 @@ wwv_flow_api.create_plugin(
 '    p_plugin         in apex_plugin.t_plugin )',
 '    return apex_plugin.t_dynamic_action_render_result',
 'as',
-'    v_calendar_locale varchar2(10) := '''';',
+'    v_calendar_locale varchar2(10) := ''en'';',
 '    v_js_on_load varchar2(4000);',
 '    l_result apex_plugin.t_dynamic_action_render_result;',
 'begin',
+'    APEX_CSS.ADD_FILE(',
+'        P_NAME => ''jquery.calendars.picker'',',
+'        P_DIRECTORY => p_plugin.file_prefix||''css/''',
+'    );',
 '    APEX_JAVASCRIPT.ADD_LIBRARY(',
 '        P_NAME => ''jquery.min'',',
 '        P_DIRECTORY => p_plugin.file_prefix||''js/'' ',
@@ -87,9 +91,13 @@ wwv_flow_api.create_plugin(
 '        P_NAME => ''jquery.calendars.ummalqura'',',
 '        P_DIRECTORY => p_plugin.file_prefix||''js/'' ',
 '    );',
+'    APEX_JAVASCRIPT.ADD_LIBRARY(',
+'        P_NAME => ''com.bakrisoft.hijricalendar'',',
+'        P_DIRECTORY => p_plugin.file_prefix||''js/'' ',
+'    );',
 '',
 '    if p_dynamic_action.attribute_02 = ''ar'' or (p_dynamic_action.attribute_02 = ''sb'' and apex_util.get_session_lang = ''ar-sa'') then',
-'        v_calendar_locale := '',''''ar'''''';',
+'        v_calendar_locale := ''ar'';',
 '        APEX_JAVASCRIPT.ADD_LIBRARY(',
 '            P_NAME => ''jquery.calendars.picker-ar'',',
 '            P_DIRECTORY => p_plugin.file_prefix||''js/'' ',
@@ -100,22 +108,10 @@ wwv_flow_api.create_plugin(
 '        );',
 '    end if;',
 '',
-'    v_js_on_load := ''function addCalendar(pickerId,itemToSet) {',
-'                        $("#"+pickerId+"").calendarsPicker({',
-'                            calendar: $.calendars.instance(''''ummalqura''''''||v_calendar_locale||''),',
-'                            dateFormat: "''||p_dynamic_action.attribute_01||''",',
-'                            onClose: function(dates){',
-'                                if(dates.length != 0)',
-'                                    apex.item(itemToSet).setValue(dates[0].formatDate("''||p_dynamic_action.attribute_01||''"));',
-'                                }',
-'                            }',
-'                        );',
-'                    }'';',
-'',
-'    APEX_JAVASCRIPT.ADD_INLINE_CODE(v_js_on_load);',
-'',
-'    l_result.javascript_function := ''addCalendar(''||apex_javascript.add_value(p_dynamic_action.attribute_03,false)||'',''',
-'                                                  ||apex_javascript.add_value(p_dynamic_action.attribute_04,false)||'')'';',
+'    l_result.javascript_function := ''addHijriPicker(''||apex_javascript.add_value(p_dynamic_action.attribute_03)',
+'                                                    ||apex_javascript.add_value(v_calendar_locale)',
+'                                                    ||apex_javascript.add_value(p_dynamic_action.attribute_01)',
+'                                                    ||apex_javascript.add_value(p_dynamic_action.attribute_04,false)||'')'';',
 '    return l_result;',
 'end;'))
 ,p_api_version=>2
@@ -124,7 +120,7 @@ wwv_flow_api.create_plugin(
 ,p_subscribe_plugin_settings=>true
 ,p_version_identifier=>'1.0'
 ,p_about_url=>'https://github.com/bakrisoft/ApexHijriPicker'
-,p_files_version=>11
+,p_files_version=>12
 );
 wwv_flow_api.create_plugin_attribute(
  p_id=>wwv_flow_api.id(143398746208996667)
@@ -3227,6 +3223,26 @@ wwv_flow_api.create_plugin_file(
  p_id=>wwv_flow_api.id(143400842655009465)
 ,p_plugin_id=>wwv_flow_api.id(143392747042979068)
 ,p_file_name=>'js/jquery.calendars.picker-ar.js'
+,p_mime_type=>'application/javascript'
+,p_file_charset=>'utf-8'
+,p_file_content=>wwv_flow_api.varchar2_to_blob(wwv_flow_api.g_varchar2_table)
+);
+end;
+/
+begin
+wwv_flow_api.g_varchar2_table := wwv_flow_api.empty_varchar2_table;
+wwv_flow_api.g_varchar2_table(1) := '66756E6374696F6E2061646448696A72695069636B6572287069636B657249642C6C6F63616C652C666F726D61744D61736B2C6974656D546F53657429207B0D0A097661722063616C203D206C6F63616C65203D3D2027656E27203F20242E63616C656E';
+wwv_flow_api.g_varchar2_table(2) := '646172732E696E7374616E63652827756D6D616C717572612729203A20242E63616C656E646172732E696E7374616E63652827756D6D616C71757261272C27617227293B0D0A0924282223222B7069636B65724964292E63616C656E646172735069636B';
+wwv_flow_api.g_varchar2_table(3) := '6572287B0D0A090963616C656E6461723A2063616C2C0D0A090964617465466F726D61743A20666F726D61744D61736B2C0D0A09096F6E436C6F73653A2066756E6374696F6E286461746573297B0D0A09090969662864617465732E6C656E6774682021';
+wwv_flow_api.g_varchar2_table(4) := '3D2030290D0A09090909617065782E6974656D286974656D546F536574292E73657456616C75652864617465735B305D2E666F726D61744461746528666F726D61744D61736B29293B0D0A0909097D0D0A09097D0D0A09293B0D0A7D';
+null;
+end;
+/
+begin
+wwv_flow_api.create_plugin_file(
+ p_id=>wwv_flow_api.id(148073239711118348)
+,p_plugin_id=>wwv_flow_api.id(143392747042979068)
+,p_file_name=>'js/com.bakrisoft.hijricalendar.js'
 ,p_mime_type=>'application/javascript'
 ,p_file_charset=>'utf-8'
 ,p_file_content=>wwv_flow_api.varchar2_to_blob(wwv_flow_api.g_varchar2_table)

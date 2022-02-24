@@ -28,7 +28,7 @@ prompt APPLICATION 104 - CollectionsDemo
 -- Application Export:
 --   Application:     104
 --   Name:            CollectionsDemo
---   Date and Time:   13:31 Thursday February 24, 2022
+--   Date and Time:   16:39 Thursday February 24, 2022
 --   Exported By:     ABUBAKR
 --   Flashback:       0
 --   Export Type:     Component Export
@@ -67,7 +67,7 @@ wwv_flow_api.create_plugin(
 '    v_item_html := ''<input type="text" id="''||p_item.name||''" class="apex-item-text"/>'';',
 '    htp.p(v_item_html);',
 '    ',
-'    APEX_CSS.ADD_FILE (',
+'    APEX_CSS.ADD_FILE(',
 '        P_NAME => ''jquery.calendars.picker'',',
 '        P_DIRECTORY => p_plugin.file_prefix||''css/''',
 '    );',
@@ -105,13 +105,14 @@ wwv_flow_api.create_plugin(
 '            P_NAME => ''jquery.calendars.ummalqura-ar'',',
 '            P_DIRECTORY => p_plugin.file_prefix||''js/''',
 '        );',
+'        v_calendar_locale := '',"ar"'';',
 '    end if;',
 '    ',
 '    v_js_on_load := ''$("#''||p_item.name||''").calendarsPicker({',
-'                        calendar: $.calendars.instance(''''ummalqura''''''||v_calendar_locale||''),',
-'                        dateFormat: ''''''||p_item.attribute_01||'''''',',
+'                        calendar: $.calendars.instance("ummalqura"''||v_calendar_locale||''),',
+'                        dateFormat: "''||p_item.attribute_01||''",',
 '                        onClose: function(dates){',
-'                            apex.event.trigger("#''||p_item.name||''", ''''change'''');',
+'                            apex.event.trigger("#''||p_item.name||''", "change");',
 '                        }',
 '                    });'';',
 '',
