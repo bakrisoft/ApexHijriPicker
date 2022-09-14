@@ -15,4 +15,4 @@ Page item to set = Pick the item to hold the Hijri date value
 <br>
 Checkout demo application
 <br>
-https://apex.oracle.com/pls/apex/f?p=92018:2
+https://apex.oracle.com/pls/apex/f?p=149223:2
